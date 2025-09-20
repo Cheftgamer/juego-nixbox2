@@ -1,0 +1,787 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(to bottom, #ff0000, #add8e6);
+    margin: 0;
+}
+
+h1 {
+    color: #333;
+}
+
+#participantes, #puntos {
+    margin: 20px 0;
+}
+
+input {
+    margin: 5px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#ruleta-container {
+    margin: 20px 0;
+    position: relative;
+}
+
+#flecha {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 30px solid red;
+    z-index: 10;
+    transition: transform 0.3s ease;
+}
+
+#flecha.pulse {
+    animation: pulse 0.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.2); border-top-width: 36px; border-left-width: 18px; border-right-width: 18px; }
+    100% { transform: translateX(-50%) scale(1); border-top-width: 30px; border-left-width: 15px; border-right-width: 15px; }
+}
+
+#ruleta {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto;
+    border: 5px solid #333;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+
+#resultado {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#resultado h2 {
+    font-size: 36px;
+    color: red;
+    margin: 0;
+    text-align: center;
+}
+
+/* Estilos para la pantalla de reglas */
+#reglas-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+#reglas-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 800px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: left;
+}
+
+#reglas-container h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2.5em;
+}
+
+#reglas-container h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+#reglas-container ol {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 30px;
+}
+
+#reglas-container li {
+    margin-bottom: 15px;
+}
+
+#reglas-container ul {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#reglas-container ul li {
+    margin-bottom: 8px;
+}
+
+#iniciar-juego {
+    display: block;
+    margin: 0 auto;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background-color: #ff6b35;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#iniciar-juego:hover {
+    background-color: #e55a2b;
+}
+
+/* Animación de transición */
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.5s ease-in;
+}
+
+/* Estilos para el Juego de Memoria */
+#memoria-screen {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+#cartas-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+    justify-items: center;
+}
+
+.carta {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0; /* Ocultar texto inicialmente */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.carta:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.carta.volteada {
+    font-size: 12px;
+    color: white;
+}
+
+.carta.rojo-oscuro { background-color: darkred; color: white; }
+.carta.azul-oscuro { background-color: darkblue; color: white; }
+.carta.verde-oscuro { background-color: darkgreen; color: white; }
+.carta.amarillo-oscuro { background-color: #666600; color: white; }
+.carta.morado-oscuro { background-color: purple; color: white; }
+.carta.gris-oscuro { background-color: darkgray; }
+
+.carta.encontrada {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+#puntos-memoria-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+#puntos-memoria-container div {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Estilos para el Juego de Colores */
+#colores-screen {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+#color-a-adivinar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin: 20px auto;
+    border: 5px solid #333;
+}
+
+#input-color {
+    margin: 10px;
+    padding: 10px;
+    width: 200px;
+}
+
+#verificar-color {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#verificar-color:hover {
+    background-color: #45a049;
+}
+
+#mensaje-color {
+    margin: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#puntos-colores-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+#puntos-colores-container div {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Estilos para Memoria de Animales */
+#memoria-animales-screen {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+#cartas-animales-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+    justify-items: center;
+}
+
+.carta-animal {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.carta-animal:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.carta-animal.volteada {
+    background-color: white;
+}
+
+.carta-animal.encontrada {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+#puntos-animales-container div {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Estilos para Escritura de Animales */
+#animales-screen {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+#animal-a-adivinar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin: 20px auto;
+    border: 5px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+}
+
+#input-animal {
+    margin: 10px;
+    padding: 10px;
+    width: 200px;
+}
+
+#verificar-animal {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#verificar-animal:hover {
+    background-color: #45a049;
+}
+
+#mensaje-animal {
+    margin: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#puntos-animales-escritura-container div {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Estilos para Memoria de Emociones */
+#memoria-emociones-screen {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+#cartas-emociones-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+    justify-items: center;
+}
+
+.carta-emocion {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.carta-emocion:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.carta-emocion.volteada {
+    background-color: white;
+}
+
+.carta-emocion.encontrada {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+#puntos-emociones-container div {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Estilos para Escritura de Emociones */
+#emociones-screen {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+#emocion-a-adivinar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin: 20px auto;
+    border: 5px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+}
+
+#input-emocion {
+    margin: 10px;
+    padding: 10px;
+    width: 200px;
+}
+
+#verificar-emocion {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#verificar-emocion:hover {
+    background-color: #45a049;
+}
+
+#mensaje-emocion {
+    margin: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#puntos-emociones-escritura-container div {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Estilos para Pantalla Final */
+#final-screen {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+#tabla-resultados {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 50%;
+}
+
+#tabla-resultados th, #tabla-resultados td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+#tabla-resultados th {
+    background-color: #f2f2f2;
+}
+
+/* Estilos para Login */
+#login-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    min-width: 350px;
+}
+
+#login-box h1 {
+    color: #fff;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.login-field {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.login-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.1em;
+}
+
+#login-box input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+#login-box input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#login-box input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+#login-box button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#login-btn {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+}
+
+#login-btn:hover {
+    background: linear-gradient(45deg, #45a049, #3d8b40);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+#login-volver {
+    background: linear-gradient(45deg, #f44336, #d32f2f);
+    color: white;
+}
+
+#login-volver:hover {
+    background: linear-gradient(45deg, #d32f2f, #b71c1c);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+}
+
+.snow {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    from {
+        top: -10px;
+        opacity: 1;
+    }
+    to {
+        top: 100vh;
+        opacity: 0;
+    }
+}
+
+/* Estilos para botones Panel Admin en juegos */
+.panel-admin-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(45deg, #ff6b35, #f7931e);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.panel-admin-btn:hover {
+    background: linear-gradient(45deg, #e55a2b, #e8851b);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+/* Estilos para el panel de administrador mejorado */
+.admin-section {
+    background: rgba(255, 255, 255, 0.9);
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-left: 4px solid #4CAF50;
+}
+
+.admin-section h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.3em;
+}
+
+.admin-btn {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+    transition: all 0.3s ease;
+}
+
+.admin-btn:hover {
+    background: linear-gradient(45deg, #45a049, #3d8b40);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.admin-btn.secondary {
+    background: linear-gradient(45deg, #6c757d, #5a6268);
+}
+
+.admin-btn.secondary:hover {
+    background: linear-gradient(45deg, #5a6268, #495057);
+}
+
+.admin-btn.danger {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+}
+
+.admin-btn.danger:hover {
+    background: linear-gradient(45deg, #c82333, #bd2130);
+}
+
+.admin-btn.warning {
+    background: linear-gradient(45deg, #ffc107, #e0a800);
+    color: #212529;
+}
+
+.admin-btn.warning:hover {
+    background: linear-gradient(45deg, #e0a800, #d39e00);
+}
+
+.admin-select {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    margin: 5px;
+    background: white;
+    min-width: 200px;
+}
+
+.admin-input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    margin: 5px;
+    background: white;
+}
+
+.puntos-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.admin-note {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    margin: 10px 0;
+}
+
+/* Estilos para respuestas interactivas */
+.respuestas-categoria {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.respuestas-categoria h4 {
+    margin-top: 0;
+    color: #495057;
+    font-size: 1.1em;
+}
+
+.respuestas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.respuesta-item {
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    text-align: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.respuesta-item:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.respuesta-item.color {
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.timer {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
